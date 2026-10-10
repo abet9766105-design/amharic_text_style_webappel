@@ -1,0 +1,29 @@
+DEPLOY ON RENDER (free web service)
+1. Put these files in a GitHub repo (root): app.py styles.py font.ttf requirements.txt .python-version render.yaml templates/ (the whole folder)
+2. Render > New > Web Service > connect the repo.
+     Build Command : pip install -r requirements.txt
+     Start Command : gunicorn app:app --workers 1 --threads 4 --timeout 120 --bind 0.0.0.0:$PORT
+     Environment   : PYTHON_VERSION = 3.12.7
+                     CONTACT_EMAIL  = your email (shown on the Contact page)
+3. Open https://YOUR-NAME.onrender.com  -> the generator should work.
+   (Free services sleep after ~15 min idle; the first visit can take up to a minute.)
+
+ADSENSE (do this only AFTER the site is live and has been public for a while)
+a) Apply at adsense.google.com with your site URL.  Google gives you a publisher id like ca-pub-1234567890123456.
+b) In Render > Environment add:   ADSENSE_CLIENT = ca-pub-1234567890123456
+   (the AdSense script and the /ads.txt file switch on automatically)
+c) After approval, make two "Display ads" units in AdSense, copy each "data-ad-slot" number, add:
+     AD_SLOT_TOP    = number of the first unit
+     AD_SLOT_BOTTOM = number of the second unit
+   Save -> the service restarts and ads appear in the two places on the home page.
+
+IMPORTANT NOTES
+- AdSense does NOT support Amharic as a site's main language. Keep the page text in English (as it is now);
+  Amharic appears only in the text the visitor types and in the generated pictures.
+- AdSense usually wants a domain you own (e.g. yourname.com). A free *.onrender.com address may not be accepted.
+  If it is refused, buy a cheap domain and attach it in Render > Settings > Custom Domains.
+- A site with only a tool and little text is often rejected as "low value content". The home page already has
+  explanation, tips and FAQ; adding more original articles (e.g. a Blogger blog linked from here) helps.
+- Check that the license of font.ttf allows use on a website and in commercial images. Replace the font if unsure.
+- Visitors from the EU/UK need a consent message (Google "Privacy & messaging" in AdSense) once ads are on.
+- Never click your own ads and never ask others to click them.

@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Amharic Text Style Generator</h1>
+<p class="lead">Type your Amharic (Ge'ez) text, pick a style, and download a ready-to-share image. Free, no sign-up, works on any phone.</p>
+
+{% if adsense_client and slot_top %}
+<div class="ad"><small>Advertisement</small>
+  <ins class="adsbygoogle" style="display:block" data-ad-client="{{ adsense_client }}" data-ad-slot="{{ slot_top }}" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+{% endif %}
+
+<div class="card">
+  <label for="text">1. Your text <span class="small">(up to {{ max_len }} characters)</span></label>
+  <input id="text" type="text" maxlength="{{ max_len }}" placeholder="ሰላም ኢትዮጵያ" autocomplete="off">
+
+  <div style="margin-top:14px">
+    <label for="photo">2. Background photo <span class="small">(optional)</span></label>
+    <div class="row">
+      <input id="photo" type="file" accept="image/*">
+      <button class="btn alt" id="clearPhoto" type="button" style="display:none">Remove photo</button>
+    </div>
+    <div class="small">Your photo is used only to make this image and is never saved.</div>
+  </div>
+
+  <div style="margin-top:14px">
+    <label>3. Choose a style</label>
+    <div class="tabs" id="tabs">
+      {% for c in cats %}<button type="button" class="tab{% if loop.first %} on{% endif %}" data-cat="{{ c.key }}">{{ c.name }}</button>{% endfor %}
+    </div>
+    <div class="grid" id="grid">
+      {% for s in styles %}<button type="button" class="sty" data-cat="{{ s.cat }}" data-key="{{ s.key }}">{{ s.name }}</button>{% endfor %}
+    </div>
+  </div>
+
+  <div class="row" style="margin-top:16px">
+    <button class="btn" id="go" type="button">Create image</button>
+    <button class="btn alt" id="rand" type="button">🎲 Random style</button>
+  </div>
+  <p id="msg" role="status"></p>
+</div>
+
+<div class="card" id="out">
+  <img id="img" alt="Your styled Amharic text">
+  <div class="row" style="justify-content:center;margin-top:12px">
+    <a class="btn" id="dl" download="amharic-style.png" style="text-decoration:none;display:inline-block">Download PNG</a>
+  </div>
+</div>
+
+{% if adsense_client and slot_bottom %}
+<div class="ad"><small>Advertisement</small>
+  <ins class="adsbygoogle" style="display:block" data-ad-client="{{ adsense_client }}" data-ad-slot="{{ slot_bottom }}" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+{% endif %}
+
+<h2>How it works</h2>
+<p>Amharic is written in the Ge'ez (Ethiopic) script, and many online text tools cannot draw it properly. This tool renders each Amharic character with an Ethiopic font and then applies visual effects such as glowing neon tubes, polished metal, flames, galaxy backgrounds, pencil sketches and more. The result is a square 900 x 900 PNG image that you can save or share.</p>
+<ol>
+  <li>Type a short word or phrase, for example a name, a greeting or a holiday wish.</li>
+  <li>Optionally add your own photo to use as the background.</li>
+  <li>Pick a style group, choose a style, and press <b>Create image</b>.</li>
+  <li>Press <b>Download PNG</b>, or press-and-hold the image on your phone to save it.</li>
+</ol>
+
+<h2>Ideas for using your images</h2>
+<ul>
+  <li>Greeting cards for holidays such as Enkutatash, Meskel, Timkat, Eid and Christmas.</li>
+  <li>Profile pictures, channel banners and social media posts.</li>
+  <li>Name designs for birthdays, weddings and invitations.</li>
+  <li>Posters for school events, shops and small businesses.</li>
+</ul>
+
+<h2>Tips for the best results</h2>
+<ul>
+  <li>Short text looks best. One to three words fill the picture with large, clear letters.</li>
+  <li>Dark photos work well behind bright neon and fire styles; bright photos suit pencil and ink styles.</li>
+  <li>If a style looks too busy, try another one. Each style handles letter shapes differently.</li>
+</ul>
+
+<h2>Frequently asked questions</h2>
+<details><summary>Is it free?</summary><p>Yes. The generator is free to use and does not need an account.</p></details>
+<details><summary>Are my text and photos saved?</summary><p>No. Your text and photo are processed in memory to create the image and are not stored on the server. See the <a href="/privacy">Privacy Policy</a>.</p></details>
+<details><summary>Why does the first image take a little longer?</summary><p>The server may be waking up after a quiet period. Later images usually appear within a few seconds.</p></details>
+<details><summary>What file do I get?</summary><p>A 900 x 900 pixel PNG image.</p></details>
+<details><summary>Can I type English letters or numbers too?</summary><p>Yes, but the tool is designed for Amharic and other Ge'ez script text, so Amharic gives the best look.</p></details>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var text = $("text"), photo = $("photo"), go = $("go"), msg = $("msg"), out = $("out"),
+      img = $("img"), dl = $("dl"), clearBtn = $("clearPhoto");
+  var current = null, lastUrl = null;
+
+  var cats = document.querySelectorAll(".tab"), styles = document.querySelectorAll(".sty");
+  function showCat(c) {
+    cats.forEach(function (t) { t.classList.toggle("on", t.dataset.cat === c); });
+    styles.forEach(function (s) { s.style.display = s.dataset.cat === c ? "" : "none"; });
+  }
+  cats.forEach(function (t) { t.onclick = function () { showCat(t.dataset.cat); }; });
+  styles.forEach(function (s) {
+    s.onclick = function () { choose(s.dataset.key); create(); };
+  });
+  function choose(key) {
+    current = key;
+    styles.forEach(function (s) { s.classList.toggle("on", s.dataset.key === key); });
+  }
+  showCat(cats[0].dataset.cat);
+
+  photo.onchange = function () { clearBtn.style.display = photo.files.length ? "" : "none"; };
+  clearBtn.onclick = function () { photo.value = ""; clearBtn.style.display = "none"; };
+  $("rand").onclick = function () {
+    var k = styles[Math.floor(Math.random() * styles.length)];
+    showCat(k.dataset.cat); choose(k.dataset.key); create();
+  };
+  go.onclick = function () {
+    if (!current) { msg.textContent = "Please choose a style first."; return; }
+    create();
+  };
+
+  function create() {
+    msg.textContent = "";
+    var t = text.value.trim();
+    if (!t) { msg.textContent = "Please type some text first."; text.focus(); return; }
+    if (!current) { msg.textContent = "Please choose a style."; return; }
+    var fd = new FormData();
+    fd.append("text", t); fd.append("style", current);
+    if (photo.files.length) fd.append("photo", photo.files[0]);
+    go.disabled = true; go.textContent = "Creating...";
+    fetch("/api/render", { method: "POST", body: fd })
+      .then(function (r) {
+        if (!r.ok) return r.json().then(function (j) { throw new Error(j.error || "Something went wrong."); });
+        return r.blob();
+      })
+      .then(function (b) {
+        if (lastUrl) URL.revokeObjectURL(lastUrl);
+        lastUrl = URL.createObjectURL(b);
+        img.src = lastUrl; dl.href = lastUrl; out.style.display = "block";
+        out.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      })
+      .catch(function (e) { msg.textContent = e.message; })
+      .finally(function () { go.disabled = false; go.textContent = "Create image"; });
+  }
+})();
+</script>
+{% endblock %}

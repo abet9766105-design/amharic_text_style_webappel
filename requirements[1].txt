@@ -1,0 +1,4 @@
+flask>=3,<4
+gunicorn>=22
+Pillow
+numpy

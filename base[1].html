@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}{{ site_name }} - Free Amharic Text Style Generator{% endblock %}</title>
+<meta name="description" content="{% block desc %}Turn Amharic (Ge'ez) text into stylish images: neon, gold, fire, galaxy and 50+ more styles. Free, no sign-up, works on your phone.{% endblock %}">
+{% if adsense_client %}
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ adsense_client }}" crossorigin="anonymous"></script>
+{% endif %}
+<style>
+  :root{--bg:#0f1220;--card:#181c30;--line:#2a2f4a;--txt:#eef0ff;--mut:#a9aed0;--acc:#7c5cff;--acc2:#ff5c8a}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Ethiopic","Nyala",sans-serif;background:var(--bg);color:var(--txt);line-height:1.65}
+  a{color:#9db4ff}
+  header{border-bottom:1px solid var(--line);background:#0c0f1c}
+  .wrap{max-width:900px;margin:0 auto;padding:0 16px}
+  .nav{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0;flex-wrap:wrap}
+  .brand{font-weight:800;font-size:1.15rem;color:#fff;text-decoration:none}
+  .brand span{background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  nav a{margin-left:14px;text-decoration:none;color:var(--mut)}
+  nav a:hover{color:#fff}
+  main{padding:22px 0 40px}
+  h1{font-size:1.7rem;line-height:1.25;margin:.2em 0 .4em}
+  h2{font-size:1.25rem;margin:1.6em 0 .5em}
+  .lead{color:var(--mut);margin-top:0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:16px 0}
+  label{display:block;font-weight:600;margin-bottom:6px}
+  input[type=text]{width:100%;font-size:1.35rem;padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:#0f1325;color:var(--txt)}
+  input[type=file]{color:var(--mut);max-width:100%}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 12px}
+  .tab,.sty,.btn{cursor:pointer;border:1px solid var(--line);background:#12162b;color:var(--txt);border-radius:999px;padding:8px 14px;font-size:.95rem}
+  .tab.on{background:var(--acc);border-color:var(--acc)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+  .sty{border-radius:10px;text-align:center;padding:10px 6px}
+  .sty:hover{border-color:var(--acc)}
+  .sty.on{border-color:var(--acc2);box-shadow:0 0 0 2px var(--acc2) inset}
+  .btn{background:linear-gradient(90deg,var(--acc),var(--acc2));border:0;font-weight:700;padding:11px 20px}
+  .btn.alt{background:#12162b;border:1px solid var(--line);font-weight:600}
+  .btn[disabled]{opacity:.5;cursor:wait}
+  #out{display:none;text-align:center}
+  #out img{max-width:100%;border-radius:12px;border:1px solid var(--line);background:#000}
+  #msg{color:#ffb3c7;min-height:1.4em;margin:8px 0 0}
+  .small{color:var(--mut);font-size:.9rem}
+  .ad{margin:18px 0;text-align:center;min-height:20px}
+  .ad small{display:block;color:#6d739a;font-size:.7rem;margin-bottom:2px}
+  details{border-top:1px solid var(--line);padding:10px 0}
+  summary{cursor:pointer;font-weight:600}
+  footer{border-top:1px solid var(--line);padding:20px 0 40px;color:var(--mut);font-size:.92rem}
+  footer a{margin-right:14px}
+</style>
+</head>
+<body>
+<header><div class="wrap nav">
+  <a class="brand" href="/"><span>{{ site_name }}</span></a>
+  <nav><a href="/">Home</a><a href="/about">About</a><a href="/privacy">Privacy</a><a href="/contact">Contact</a></nav>
+</div></header>
+<main><div class="wrap">
+{% block content %}{% endblock %}
+</div></main>
+<footer><div class="wrap">
+  <a href="/about">About</a><a href="/privacy">Privacy Policy</a><a href="/contact">Contact</a>
+  <div style="margin-top:8px">&copy; {{ site_name }}. Your text and photos are processed in memory and are not stored.</div>
+</div></footer>
+</body>
+</html>
